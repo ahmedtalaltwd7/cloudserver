@@ -41,7 +41,7 @@ import Layout from '../layouts/Layout.astro';
 <script>
   // Redirect if already logged in
   if (localStorage.getItem('auth-token')) {
-    window.location.href = '/login';
+    window.location.href = '/';
   }
 
   document.getElementById('login-form').addEventListener('submit', async (e) => {
