@@ -1,0 +1,125 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="نموذج إدخال البيانات">
+  <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8 max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">نموذج إدخال البيانات</h1>
+    
+    <form id="data-form" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="field1" class="block text-sm font-medium text-gray-700 mb-2">الحقل الأول</label>
+          <input type="text" id="field1" name="field1" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+        
+        <div>
+          <label for="field2" class="block text-sm font-medium text-gray-700 mb-2">الحقل الثاني</label>
+          <input type="text" id="field2" name="field2" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+        
+        <div>
+          <label for="field3" class="block text-sm font-medium text-gray-700 mb-2">الحقل الثالث</label>
+          <input type="text" id="field3" name="field3" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+        
+        <div>
+          <label for="field4" class="block text-sm font-medium text-gray-700 mb-2">الحقل الرابع</label>
+          <input type="text" id="field4" name="field4" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+        
+        <div>
+          <label for="field5" class="block text-sm font-medium text-gray-700 mb-2">الحقل الخامس</label>
+          <input type="text" id="field5" name="field5" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+        
+        <div>
+          <label for="field6" class="block text-sm font-medium text-gray-700 mb-2">الحقل السادس</label>
+          <input type="text" id="field6" name="field6" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+        
+        <div>
+          <label for="field7" class="block text-sm font-medium text-gray-700 mb-2">الحقل السابع</label>
+          <input type="text" id="field7" name="field7" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+        
+        <div>
+          <label for="field8" class="block text-sm font-medium text-gray-700 mb-2">الحقل الثامن</label>
+          <input type="text" id="field8" name="field8" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+      </div>
+      
+      <div class="text-center">
+        <button type="submit" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors transform hover:scale-105">
+          حفظ البيانات
+        </button>
+      </div>
+    </form>
+    
+    <div id="message" class="hidden mt-6 p-4 rounded-lg text-center font-medium"></div>
+  </div>
+</Layout>
+
+<script>
+  document.getElementById('data-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    
+    // Validate all fields are filled
+    const requiredFields = ['field1', 'field2', 'field3', 'field4', 'field5', 'field6', 'field7', 'field8'];
+    const missingFields = requiredFields.filter(field => !data[field]?.trim());
+    
+    if (missingFields.length > 0) {
+      showMessage('الرجاء إدخال جميع الحقول', 'error');
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showMessage('تم حفظ البيانات بنجاح', 'success');
+        e.target.reset();
+      } else {
+        showMessage(result.error || 'فشل في حفظ البيانات', 'error');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      showMessage('حدث خطأ أثناء حفظ البيانات', 'error');
+    }
+  });
+  
+  function showMessage(message, type) {
+    const messageEl = document.getElementById('message');
+    messageEl.textContent = message;
+    messageEl.className = `mt-6 p-4 rounded-lg text-center font-medium ${
+      type === 'success' 
+        ? 'bg-green-100 text-green-800 border border-green-200' 
+        : 'bg-red-100 text-red-800 border border-red-200'
+    }`;
+    messageEl.classList.remove('hidden');
+    
+    setTimeout(() => {
+      messageEl.classList.add('hidden');
+    }, 5000);
+  }
+</script>

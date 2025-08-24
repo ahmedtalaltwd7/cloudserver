@@ -1,0 +1,72 @@
+---
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="تطبيق إدخال ومعاينة البيانات" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen">
+    <nav class="bg-white/10 backdrop-blur-md border-b border-white/20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center space-x-4 space-x-reverse">
+            <a href="/" class="text-white font-bold text-xl">نموذج البيانات</a>
+            <a href="/data" class="text-white/80 hover:text-white transition-colors">عرض البيانات</a>
+          </div>
+          <div class="flex items-center">
+            <div id="auth-section" class="flex items-center space-x-2 space-x-reverse">
+              <a href="/login" id="login-link" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors">
+                تسجيل الدخول
+              </a>
+              <div id="user-info" class="hidden text-white">
+                <span id="username"></span>
+                <button id="logout-btn" class="mr-2 bg-red-500/20 hover:bg-red-500/30 px-3 py-1 rounded transition-colors">
+                  خروج
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <slot />
+    </main>
+
+    <script>
+      // Check authentication status
+      function checkAuth() {
+        const token = localStorage.getItem('auth-token');
+        const user = localStorage.getItem('user-data');
+        
+        if (token && user) {
+          const userData = JSON.parse(user);
+          document.getElementById('login-link').classList.add('hidden');
+          document.getElementById('user-info').classList.remove('hidden');
+          document.getElementById('username').textContent = userData.username;
+        }
+      }
+
+      // Logout function
+      document.getElementById('logout-btn')?.addEventListener('click', () => {
+        localStorage.removeItem('auth-token');
+        localStorage.removeItem('user-data');
+        window.location.href = '/';
+      });
+
+      // Initialize auth check
+      checkAuth();
+    </script>
+  </body>
+</html>

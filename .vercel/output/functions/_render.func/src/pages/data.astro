@@ -1,0 +1,447 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="عرض البيانات">
+  <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">جميع السجلات</h1>
+      <div class="flex space-x-4 space-x-reverse">
+        <button id="add-record-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+          إضافة سجل جديد
+        </button>
+        <button id="logout-btn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+          تسجيل الخروج
+        </button>
+      </div>
+    </div>
+    
+    <!-- Summary Statistics -->
+    <div id="summary-stats" class="bg-gray-100 rounded-lg p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+        <div>
+          <div class="text-lg font-semibold text-gray-800">إجمالي السجلات = <span id="total-records">0</span></div>
+        </div>
+        <div>
+          <div class="text-lg font-semibold text-gray-800">إجمالي المبلغ المطلوب = <span id="total-required">0.00</span></div>
+        </div>
+        <div>
+          <div class="text-lg font-semibold text-gray-800">إجمالي المبلغ المدفوع = <span id="total-paid">0.00</span></div>
+        </div>
+        <div>
+          <div class="text-lg font-semibold text-gray-800">المبلغ المتبقي = <span id="remaining-amount">0.00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="overflow-x-auto mb-8">
+      <table class="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-50">
+            <th class="border border-gray-300 px-4 py-2 text-right">اسم العميل</th>
+            <th class="border border-gray-300 px-4 py-2 text-right">الشخص المفوض</th>
+            <th class="border border-gray-300 px-4 py-2 text-right">المبلغ المطلوب</th>
+            <th class="border border-gray-300 px-4 py-2 text-right">المبلغ المدفوع</th>
+            <th class="border border-gray-300 px-4 py-2 text-right">رقم السند</th>
+            <th class="border border-gray-300 px-4 py-2 text-right">سعر الصرف</th>
+            <th class="border border-gray-300 px-4 py-2 text-right">0</th>
+            <th class="border border-gray-300 px-4 py-2 text-right">0</th>
+            <th class="border border-gray-300 px-4 py-2 text-right">تاريخ الإنشاء</th>
+            <th class="border border-gray-300 px-4 py-2 text-right">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="data-table-body">
+          <tr>
+            <td colspan="10" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+              جاري تحميل البيانات...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Record Detail Section -->
+    <div id="record-detail" class="bg-gray-50 rounded-lg p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-gray-800">رقم السجل #<span id="detail-record-id">-</span></h3>
+        <div class="flex space-x-2 space-x-reverse">
+          <button id="edit-detail-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            تعديل
+          </button>
+          <button id="delete-detail-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+            حذف
+          </button>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">اسم العميل:</label>
+          <div id="detail-field1" class="mt-1 text-gray-800 bg-white p-2 rounded border">-</div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">الشخص المفوض:</label>
+          <div id="detail-field2" class="mt-1 text-gray-800 bg-white p-2 rounded border">-</div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">المبلغ المطلوب:</label>
+          <div id="detail-field3" class="mt-1 text-gray-800 bg-white p-2 rounded border">-</div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">المبلغ المدفوع:</label>
+          <div id="detail-field4" class="mt-1 text-gray-800 bg-white p-2 rounded border">-</div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">رقم السند:</label>
+          <div id="detail-field5" class="mt-1 text-gray-800 bg-white p-2 rounded border">-</div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">سعر الصرف:</label>
+          <div id="detail-field6" class="mt-1 text-gray-800 bg-white p-2 rounded border">-</div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">0:</label>
+          <div id="detail-field7" class="mt-1 text-gray-800 bg-white p-2 rounded border">-</div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">0:</label>
+          <div id="detail-field8" class="mt-1 text-gray-800 bg-white p-2 rounded border">-</div>
+        </div>
+      </div>
+      
+      <div class="mt-4 pt-4 border-t border-gray-200">
+        <label class="block text-sm font-medium text-gray-700">تاريخ الإنشاء:</label>
+        <div id="detail-created-at" class="mt-1 text-gray-800">-</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="edit-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">تعديل السجل</h2>
+      <form id="edit-form" class="space-y-4">
+        <input type="hidden" id="edit-id">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">الحقل الأول</label>
+            <input type="text" id="edit-field1" name="field1" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">الحقل الثاني</label>
+            <input type="text" id="edit-field2" name="field2" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">الحقل الثالث</label>
+            <input type="text" id="edit-field3" name="field3" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">الحقل الرابع</label>
+            <input type="text" id="edit-field4" name="field4" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">الحقل الخامس</label>
+            <input type="text" id="edit-field5" name="field5" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">الحقل السادس</label>
+            <input type="text" id="edit-field6" name="field6" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">الحقل السابع</label>
+            <input type="text" id="edit-field7" name="field7" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">الحقل الثامن</label>
+            <input type="text" id="edit-field8" name="field8" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+        <div class="flex space-x-4 space-x-reverse justify-center pt-4">
+          <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors">
+            حفظ التعديل
+          </button>
+          <button type="button" id="cancel-edit" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors">
+            إلغاء
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div id="delete-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">تأكيد الحذف</h2>
+      <p class="text-gray-600 mb-6">هل أنت متأكد من حذف هذا السجل؟ هذه الخطوة لا يمكن التراجع عنها.</p>
+      <div class="flex space-x-4 space-x-reverse justify-center">
+        <button id="confirm-delete" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors">
+          حذف
+        </button>
+        <button id="cancel-delete" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors">
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  let currentEditId = null;
+  let currentDeleteId = null;
+  let selectedRecordId = null;
+  let allSubmissions = [];
+
+  // Load data from API
+  async function loadData() {
+    try {
+      const response = await fetch('/api/submissions');
+      const data = await response.json();
+      
+      if (data.success) {
+        allSubmissions = data.submissions;
+        renderTable(allSubmissions);
+        updateSummaryStats(allSubmissions);
+        if (allSubmissions.length > 0) {
+          selectRecord(allSubmissions[0]._id);
+        }
+      } else {
+        document.getElementById('data-table-body').innerHTML = 
+          '<tr><td colspan="10" class="border border-gray-300 px-4 py-8 text-center text-red-500">فشل في تحميل البيانات</td></tr>';
+      }
+    } catch (error) {
+      console.error('Load data error:', error);
+      document.getElementById('data-table-body').innerHTML = 
+        '<tr><td colspan="10" class="border border-gray-300 px-4 py-8 text-center text-red-500">حدث خطأ في تحميل البيانات</td></tr>';
+    }
+  }
+
+  // Update summary statistics
+  function updateSummaryStats(submissions) {
+    const totalRecords = submissions.length;
+    let totalRequired = 0;
+    let totalPaid = 0;
+
+    submissions.forEach(submission => {
+      const required = parseFloat(submission.field3) || 0;
+      const paid = parseFloat(submission.field4) || 0;
+      totalRequired += required;
+      totalPaid += paid;
+    });
+
+    const remaining = totalRequired - totalPaid;
+
+    document.getElementById('total-records').textContent = totalRecords;
+    document.getElementById('total-required').textContent = totalRequired.toFixed(2);
+    document.getElementById('total-paid').textContent = totalPaid.toFixed(2);
+    document.getElementById('remaining-amount').textContent = remaining.toFixed(2);
+  }
+
+  // Render data table
+  function renderTable(submissions) {
+    const tbody = document.getElementById('data-table-body');
+    
+    if (submissions.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10" class="border border-gray-300 px-4 py-8 text-center text-gray-500">لا توجد بيانات محفوظة</td></tr>';
+      return;
+    }
+
+    const formatDate = (dateString) => {
+      return new Date(dateString).toLocaleDateString('ar-EG', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+
+    const html = submissions.map(submission => {
+      const isSelected = selectedRecordId === submission._id;
+      return `
+        <tr class="hover:bg-gray-50 cursor-pointer ${isSelected ? 'bg-blue-50' : ''}" onclick="selectRecord('${submission._id}')">
+          <td class="border border-gray-300 px-4 py-2">${submission.field1 || ''}</td>
+          <td class="border border-gray-300 px-4 py-2">${submission.field2 || ''}</td>
+          <td class="border border-gray-300 px-4 py-2">${submission.field3 || ''}</td>
+          <td class="border border-gray-300 px-4 py-2">${submission.field4 || ''}</td>
+          <td class="border border-gray-300 px-4 py-2">${submission.field5 || ''}</td>
+          <td class="border border-gray-300 px-4 py-2">${submission.field6 || ''}</td>
+          <td class="border border-gray-300 px-4 py-2">${submission.field7 || ''}</td>
+          <td class="border border-gray-300 px-4 py-2">${submission.field8 || ''}</td>
+          <td class="border border-gray-300 px-4 py-2 text-sm">${formatDate(submission.created_at)}</td>
+          <td class="border border-gray-300 px-4 py-2">
+            <div class="flex space-x-1 space-x-reverse">
+              <button onclick="event.stopPropagation(); editSubmission('${submission._id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-colors">
+                Edit
+              </button>
+              <button onclick="event.stopPropagation(); deleteSubmission('${submission._id}')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs transition-colors">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    tbody.innerHTML = html;
+  }
+
+  // Select record and show in detail view
+  function selectRecord(id) {
+    selectedRecordId = id;
+    const submission = allSubmissions.find(s => s._id === id);
+    if (!submission) return;
+
+    // Update detail view
+    document.getElementById('detail-record-id').textContent = submission._id.slice(-6);
+    for (let i = 1; i <= 8; i++) {
+      document.getElementById(`detail-field${i}`).textContent = submission[`field${i}`] || '-';
+    }
+    
+    const formatDate = (dateString) => {
+      return new Date(dateString).toLocaleDateString('ar-EG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+    
+    document.getElementById('detail-created-at').textContent = formatDate(submission.created_at);
+    
+    // Re-render table to highlight selected row
+    renderTable(allSubmissions);
+  }
+
+  // Edit submission
+  async function editSubmission(id) {
+    try {
+      const response = await fetch(`/api/submissions/${id}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        const submission = data.submission;
+        currentEditId = id;
+        
+        // Fill form
+        document.getElementById('edit-id').value = id;
+        for (let i = 1; i <= 8; i++) {
+          document.getElementById(`edit-field${i}`).value = submission[`field${i}`] || '';
+        }
+        
+        document.getElementById('edit-modal').classList.remove('hidden');
+      }
+    } catch (error) {
+      console.error('Edit error:', error);
+      alert('حدث خطأ في تحميل بيانات السجل');
+    }
+  }
+
+  // Delete submission
+  function deleteSubmission(id) {
+    currentDeleteId = id;
+    document.getElementById('delete-modal').classList.remove('hidden');
+  }
+
+  // Event listeners
+  document.getElementById('add-record-btn').addEventListener('click', () => {
+    window.location.href = '/';
+  });
+  
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    localStorage.removeItem('auth-token');
+    localStorage.removeItem('user-data');
+    window.location.href = '/login';
+  });
+
+  document.getElementById('edit-detail-btn').addEventListener('click', () => {
+    if (selectedRecordId) {
+      editSubmission(selectedRecordId);
+    }
+  });
+
+  document.getElementById('delete-detail-btn').addEventListener('click', () => {
+    if (selectedRecordId) {
+      deleteSubmission(selectedRecordId);
+    }
+  });
+
+  // Edit form
+  document.getElementById('edit-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    delete data.field0; // Remove hidden field
+    
+    try {
+      const token = localStorage.getItem('auth-token');
+      const response = await fetch(`/api/submissions/${currentEditId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        document.getElementById('edit-modal').classList.add('hidden');
+        loadData();
+        alert('تم تحديث السجل بنجاح');
+      } else {
+        alert(result.error || 'فشل في تحديث السجل');
+      }
+    } catch (error) {
+      console.error('Update error:', error);
+      alert('حدث خطأ أثناء تحديث السجل');
+    }
+  });
+
+  // Cancel edit
+  document.getElementById('cancel-edit').addEventListener('click', () => {
+    document.getElementById('edit-modal').classList.add('hidden');
+  });
+
+  // Confirm delete
+  document.getElementById('confirm-delete').addEventListener('click', async () => {
+    try {
+      const token = localStorage.getItem('auth-token');
+      const response = await fetch(`/api/submissions/${currentDeleteId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        document.getElementById('delete-modal').classList.add('hidden');
+        loadData();
+        alert('تم حذف السجل بنجاح');
+      } else {
+        alert(result.error || 'فشل في حذف السجل');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert('حدث خطأ أثناء حذف السجل');
+    }
+  });
+
+  // Cancel delete
+  document.getElementById('cancel-delete').addEventListener('click', () => {
+    document.getElementById('delete-modal').classList.add('hidden');
+  });
+
+  // Make functions global for onclick handlers
+  window.editSubmission = editSubmission;
+  window.deleteSubmission = deleteSubmission;
+  window.selectRecord = selectRecord;
+
+  // Initialize
+  loadData();
+</script>
